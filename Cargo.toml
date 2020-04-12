@@ -12,3 +12,6 @@ members = [
     "backend",
     "frontend",
 ]
+
+[dependencies]
+rand = "0.7.3"
