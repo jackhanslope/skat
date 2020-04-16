@@ -1,10 +1,8 @@
-// #![feature(proc_macro_hygiene, decl_macro)]
-
+#![feature(proc_macro_hygiene, decl_macro)]
 #[macro_use]
-extern crate rocket;
-extern crate rocket_contrib;
 
 use rocket::response::NamedFile;
+use rocket::{get, routes};
 use rocket_contrib::serve::StaticFiles;
 use std::path::Path;
 
