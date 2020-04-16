@@ -9,7 +9,7 @@ use std::path::Path;
 #[get("/new_deck")]
 fn new_deck() -> Vec<skat::Card> {
     println!("Hello, world!");
-    //...
+    skat::new_deck()
 }
 
 #[get("/")]

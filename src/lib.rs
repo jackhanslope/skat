@@ -4,7 +4,6 @@
 use rand::seq::SliceRandom;
 use rand::thread_rng;
 
-fn main() {}
 #[derive(Copy, Clone, Debug)]
 pub enum Suit {
     Club,
@@ -26,7 +25,7 @@ pub enum Rank {
 }
 
 #[derive(Debug)]
-struct Card {
+pub struct Card {
     suit: Suit,
     rank: Rank,
 }
@@ -65,7 +64,7 @@ enum State {
     Completed,
 }
 
-fn new_deck() -> Vec<Card> {
+pub fn new_deck() -> Vec<Card> {
     let ranks = [
         Rank::Seven,
         Rank::Eight,
