@@ -1,12 +1,16 @@
 #![feature(proc_macro_hygiene, decl_macro)]
 
-#[macro_use] 
-extern crate rocket;
-extern crate rocket_contrib;
-
-use rocket_contrib::serve::StaticFiles;
 use rocket::response::NamedFile;
+use rocket::{get, routes};
+use rocket_contrib::json::Json;
+use rocket_contrib::serve::StaticFiles;
 use std::path::Path;
+
+#[get("/new_deck")]
+fn new_deck() -> Json<Vec<skat::Card>> {
+    println!("Hello, world!");
+    Json(skat::new_deck())
+}
 
 #[get("/")]
 fn index() -> Option<NamedFile> {
@@ -16,6 +20,7 @@ fn index() -> Option<NamedFile> {
 fn main() {
     rocket::ignite()
         .mount("/static", StaticFiles::from("../static"))
+        .mount("/api", routes![new_deck])
         .mount("/", routes![index])
         .launch();
 }
