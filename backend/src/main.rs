@@ -4,12 +4,13 @@
 use rocket::response::NamedFile;
 use rocket::{get, routes};
 use rocket_contrib::serve::StaticFiles;
+use rocket_contrib::json::Json;
 use std::path::Path;
 
 #[get("/new_deck")]
-fn new_deck() -> Vec<skat::Card> {
+fn new_deck() -> Json<Vec<skat::Card>> {
     println!("Hello, world!");
-    skat::new_deck()
+    Json(skat::new_deck())
 }
 
 #[get("/")]

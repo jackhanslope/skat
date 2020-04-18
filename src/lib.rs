@@ -3,8 +3,9 @@
 
 use rand::seq::SliceRandom;
 use rand::thread_rng;
+use serde::{Serialize, Deserialize};
 
-#[derive(Copy, Clone, Debug)]
+#[derive(Serialize, Deserialize, Copy, Clone, Debug)]
 pub enum Suit {
     Club,
     Spade,
@@ -12,7 +13,7 @@ pub enum Suit {
     Diamond,
 }
 
-#[derive(Copy, Clone, Debug)]
+#[derive(Serialize, Deserialize, Copy, Clone, Debug)]
 pub enum Rank {
     Seven,
     Eight,
@@ -24,7 +25,7 @@ pub enum Rank {
     Jack,
 }
 
-#[derive(Debug)]
+#[derive(Serialize, Deserialize, Debug)]
 pub struct Card {
     suit: Suit,
     rank: Rank,
