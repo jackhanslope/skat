@@ -3,7 +3,7 @@
 
 use rand::seq::SliceRandom;
 use rand::thread_rng;
-use serde::{Serialize, Deserialize};
+use serde::{Deserialize, Serialize};
 
 #[derive(Serialize, Deserialize, Copy, Clone, Debug)]
 pub enum Suit {

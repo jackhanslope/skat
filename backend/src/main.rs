@@ -2,8 +2,8 @@
 
 use rocket::response::NamedFile;
 use rocket::{get, routes};
-use rocket_contrib::serve::StaticFiles;
 use rocket_contrib::json::Json;
+use rocket_contrib::serve::StaticFiles;
 use std::path::Path;
 
 #[get("/new_deck")]
