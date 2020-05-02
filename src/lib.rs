@@ -1,35 +1,14 @@
+// TODO: delete the two lines below before deployment
 #![allow(unused_variables)]
+#![allow(unused_imports)]
 #![allow(dead_code)]
 
+pub mod card;
+
+use card::{Card, Rank, Suit};
 use rand::seq::SliceRandom;
 use rand::thread_rng;
 use serde::{Deserialize, Serialize};
-
-#[derive(Serialize, Deserialize, Copy, Clone, Debug)]
-pub enum Suit {
-    Club,
-    Spade,
-    Heart,
-    Diamond,
-}
-
-#[derive(Serialize, Deserialize, Copy, Clone, Debug)]
-pub enum Rank {
-    Seven,
-    Eight,
-    Nine,
-    Queen,
-    King,
-    Ten,
-    Ace,
-    Jack,
-}
-
-#[derive(Serialize, Deserialize, Debug)]
-pub struct Card {
-    suit: Suit,
-    rank: Rank,
-}
 
 struct Player {
     hand: Vec<Card>,
