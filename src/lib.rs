@@ -4,45 +4,12 @@
 #![allow(dead_code)]
 
 pub mod card;
+pub mod game;
 
 use card::{Card, Rank, Suit};
 use rand::seq::SliceRandom;
 use rand::thread_rng;
 use serde::{Deserialize, Serialize};
-
-struct Player {
-    hand: Vec<Card>,
-}
-
-enum NullModifier {
-    Standard,
-    Hand,
-    Overt,
-    HandOvert,
-}
-
-enum Mode {
-    SuitGame(Suit),
-    Null(NullModifier),
-    Grand,
-}
-
-struct Game {
-    state: State,
-    mode: Mode,
-    deck: Vec<Card>,
-    forehand: Player,
-    middlehand: Player,
-    rearhand: Player,
-    skat: [Card; 2],
-}
-
-enum State {
-    NotStarted,
-    Bidding(usize), // u8 to keep track of who's go it is
-    Trick(usize),   // u8 to keep track of who's go it is
-    Completed,
-}
 
 pub fn new_deck() -> Vec<Card> {
     let ranks = [
