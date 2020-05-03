@@ -1,6 +1,5 @@
 use yew::services::ConsoleService;
 use yew::prelude::*;
-//use yew::{html, Component, ComponentLink, Html, ShouldRender};
 
 pub struct PlayerView {
     player: skat::Player,

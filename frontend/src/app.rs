@@ -1,6 +1,6 @@
 use yew::prelude::*;
 
-use super::player_view::PlayerView;
+use crate::player_view::PlayerView;
 
 pub struct App {}
 
