@@ -17,10 +17,15 @@ fn index() -> Option<NamedFile> {
     NamedFile::open(Path::new("../static/index.html")).ok()
 }
 
+#[get("/favicon.ico")]
+fn favicon() -> Option<NamedFile> {
+    NamedFile::open(Path::new("../static/favicon.ico")).ok()
+}
+
 fn main() {
     rocket::ignite()
         .mount("/static", StaticFiles::from("../static"))
         .mount("/api", routes![new_deck])
-        .mount("/", routes![index])
+        .mount("/", routes![index, favicon])
         .launch();
 }
