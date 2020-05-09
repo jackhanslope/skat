@@ -31,8 +31,9 @@ pub struct Card {
     rank: Rank,
 }
 
-struct Player {
-    hand: Vec<Card>,
+#[derive(Serialize, Deserialize, Debug)]
+pub struct Player {
+    pub hand: Vec<Card>,
 }
 
 enum NullModifier {
