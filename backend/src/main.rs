@@ -5,12 +5,15 @@ use rocket::{get, routes};
 use rocket_contrib::json::Json;
 use rocket_contrib::serve::StaticFiles;
 use skat::card::Card;
+use skat::deck::Deck;
 use std::path::Path;
 
 #[get("/new_deck")]
 fn new_deck() -> Json<Vec<Card>> {
     println!("Hello, world!");
-    Json(skat::new_deck())
+    let mut deck = Deck::new();
+    deck.shuffle();
+    Json(deck.cards)
 }
 
 #[get("/")]

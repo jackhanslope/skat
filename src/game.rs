@@ -1,4 +1,4 @@
-use crate::card::{Card, Rank, Suit};
+use crate::card::{Card, Suit};
 use serde::{Deserialize, Serialize};
 
 struct Game {
