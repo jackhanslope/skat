@@ -1,4 +1,5 @@
 use crate::card::{Card, Rank, Suit};
+use serde::{Deserialize, Serialize};
 
 struct Game {
     state: State,
@@ -10,8 +11,9 @@ struct Game {
     skat: [Card; 2],
 }
 
-struct Player {
-    hand: Vec<Card>,
+#[derive(Serialize, Deserialize, Debug)]
+pub struct Player {
+    pub hand: Vec<Card>,
 }
 
 enum Mode {
