@@ -194,6 +194,8 @@ name = "frontend"
 version = "0.1.0"
 dependencies = [
  "js-sys",
+ "serde_json",
+ "skat",
  "wasm-bindgen",
  "yew",
 ]
