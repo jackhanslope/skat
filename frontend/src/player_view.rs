@@ -1,8 +1,9 @@
-use yew::services::ConsoleService;
+use skat::game;
 use yew::prelude::*;
+use yew::services::ConsoleService;
 
 pub struct PlayerView {
-    player: skat::Player,
+    player: game::Player,
     name: String,
     link: ComponentLink<Self>,
     console: ConsoleService,
@@ -23,7 +24,7 @@ impl Component for PlayerView {
 
     fn create(props: Self::Properties, link: ComponentLink<Self>) -> Self {
         PlayerView {
-            player: skat::Player { hand: Vec::new() },
+            player: game::Player { hand: Vec::new() },
             name: props.name,
             link: link,
             console: ConsoleService::new(),
