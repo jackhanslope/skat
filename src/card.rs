@@ -8,7 +8,6 @@ pub enum Suit {
     Diamond,
 }
 
-// TODO: consider refactoring the code with modules. Jack.
 #[derive(Serialize, Deserialize, Copy, Clone, Debug)]
 pub enum Rank {
     Seven,
