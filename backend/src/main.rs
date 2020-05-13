@@ -14,17 +14,17 @@ fn new_deck() -> Json<Vec<skat::Card>> {
 
 #[get("/")]
 fn index() -> Option<NamedFile> {
-    NamedFile::open(Path::new("../static/index.html")).ok()
+    NamedFile::open(Path::new("./static/index.html")).ok()
 }
 
 #[get("/favicon.ico")]
 fn favicon() -> Option<NamedFile> {
-    NamedFile::open(Path::new("../static/favicon.ico")).ok()
+    NamedFile::open(Path::new("./static/favicon.ico")).ok()
 }
 
 fn main() {
     rocket::ignite()
-        .mount("/static", StaticFiles::from("../static"))
+        .mount("/static", StaticFiles::from("./static"))
         .mount("/api", routes![new_deck])
         .mount("/", routes![index, favicon])
         .launch();
