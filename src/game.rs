@@ -45,11 +45,17 @@ impl Round {
         let mut deck = Deck::new();
         deck.shuffle();
 
-        let forehand = RoundPlayer::new();
-        let middlehand = RoundPlayer::new();
-        let rearhand = RoundPlayer::new();
+        let mut forehand = RoundPlayer::new();
+        let mut middlehand = RoundPlayer::new();
+        let mut rearhand = RoundPlayer::new();
 
         let skat: [Card; 2] = [deck.cards.pop().unwrap(), deck.cards.pop().unwrap()];
+
+        for x in 0..11 {
+            forehand.hand.push(deck.cards.pop().unwrap());
+            middlehand.hand.push(deck.cards.pop().unwrap());
+            rearhand.hand.push(deck.cards.pop().unwrap());
+        }
 
         Round {
             state: State::NotStarted,
