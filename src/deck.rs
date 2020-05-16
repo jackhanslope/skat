@@ -31,8 +31,6 @@ impl Deck {
             }
         }
 
-        // deck.shuffle(&mut thread_rng());
-
         Deck { cards: deck }
     }
 

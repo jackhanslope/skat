@@ -4,24 +4,27 @@ use crate::deck::Deck;
 use serde::{Deserialize, Serialize};
 
 struct Game {
-    player1: Player,
-    player2: Player,
-    player3: Player,
+    player1: GamePlayer,
+    player2: GamePlayer,
+    player3: GamePlayer,
     deck: Deck,
+    round: Round,
 }
 
 impl Game {
     fn new() -> Game {
-        let player1 = Player::new();
-        let player2 = Player::new();
-        let player3 = Player::new();
+        let player1 = GamePlayer::new();
+        let player2 = GamePlayer::new();
+        let player3 = GamePlayer::new();
         let deck = Deck::new();
+        let round = Round::new();
 
         Game {
             player1: player1,
             player2: player2,
             player3: player3,
             deck: deck,
+            round: round,
         }
     }
 }
@@ -31,28 +34,60 @@ impl Game {
 struct Round {
     state: State,
     mode: Mode,
-    deck: Deck,
-    forehand: Player,
-    middlehand: Player,
-    rearhand: Player,
+    forehand: RoundPlayer,
+    middlehand: RoundPlayer,
+    rearhand: RoundPlayer,
     skat: [Card; 2],
 }
 
+impl Round {
+    fn new() -> Round {
+        let mut deck = Deck::new();
+        deck.shuffle();
+
+        let forehand = RoundPlayer::new();
+        let middlehand = RoundPlayer::new();
+        let rearhand = RoundPlayer::new();
+
+        let skat: [Card; 2] = [deck.cards.pop().unwrap(), deck.cards.pop().unwrap()];
+
+        Round {
+            state: State::NotStarted,
+            mode: Mode::Bidding,
+            forehand: forehand,
+            middlehand: middlehand,
+            rearhand: rearhand,
+            skat: skat,
+        }
+    }
+}
+
 #[derive(Serialize, Deserialize, Debug)]
-pub struct Player {
+pub struct GamePlayer {
+    score: isize,
+}
+
+impl GamePlayer {
+    // init a player with an empty hand
+    pub fn new() -> GamePlayer {
+        GamePlayer { score: 0 }
+    }
+}
+
+pub struct RoundPlayer {
     pub hand: Vec<Card>,
 }
 
-impl Player {
-    // init a player with an empty hand
-    pub fn new() -> Player {
+impl RoundPlayer {
+    pub fn new() -> RoundPlayer {
         let hand: Vec<Card> = Vec::new();
 
-        Player { hand: hand }
+        RoundPlayer { hand: hand }
     }
 }
 
 enum Mode {
+    Bidding,
     SuitGame(Suit),
     Null(NullModifier),
     Grand,
