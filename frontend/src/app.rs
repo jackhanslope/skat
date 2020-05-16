@@ -1,6 +1,6 @@
 use yew::prelude::*;
 
-use crate::player_view::PlayerView;
+use crate::game_player_view::GamePlayerView;
 
 pub struct App {}
 
@@ -26,9 +26,9 @@ impl Component for App {
         html! {
             <div class="main">
                 <h1>{ "Skat" }</h1>
-                <PlayerView name="Alice"/>
-                <PlayerView name="Bob"/>
-                <PlayerView name="Eve"/>
+                <GamePlayerView name="Alice"/>
+                <GamePlayerView name="Bob"/>
+                <GamePlayerView name="Eve"/>
             </div>
         }
     }

@@ -64,7 +64,7 @@ impl Round {
 
 #[derive(Serialize, Deserialize, Debug)]
 pub struct GamePlayer {
-    score: isize,
+    pub score: isize,
 }
 
 impl GamePlayer {

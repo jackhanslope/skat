@@ -2,8 +2,8 @@ use skat::game;
 use yew::prelude::*;
 use yew::services::ConsoleService;
 
-pub struct PlayerView {
-    player: game::Player,
+pub struct GamePlayerView {
+    player: game::GamePlayer,
     name: String,
     link: ComponentLink<Self>,
     console: ConsoleService,
@@ -18,13 +18,13 @@ pub struct Props {
     pub name: String,
 }
 
-impl Component for PlayerView {
+impl Component for GamePlayerView {
     type Message = Msg;
     type Properties = Props;
 
     fn create(props: Self::Properties, link: ComponentLink<Self>) -> Self {
-        PlayerView {
-            player: game::Player { hand: Vec::new() },
+        GamePlayerView {
+            player: game::GamePlayer::new(),
             name: props.name,
             link: link,
             console: ConsoleService::new(),
@@ -34,7 +34,7 @@ impl Component for PlayerView {
     fn update(&mut self, msg: Self::Message) -> ShouldRender {
         match msg {
             Msg::NewDeck => {
-                self.player.hand = Vec::new();
+                self.player.score = 0;
                 self.console.log("New Hand");
             }
         }
