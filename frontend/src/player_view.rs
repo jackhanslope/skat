@@ -1,9 +1,9 @@
-use skat::game;
+use skat::card::Card;
 use yew::prelude::*;
 use yew::services::ConsoleService;
 
 pub struct PlayerView {
-    player: game::Player,
+    hand: Vec<Card>,
     name: String,
     link: ComponentLink<Self>,
     console: ConsoleService,
@@ -24,7 +24,7 @@ impl Component for PlayerView {
 
     fn create(props: Self::Properties, link: ComponentLink<Self>) -> Self {
         PlayerView {
-            player: game::Player { hand: Vec::new() },
+            hand: Vec::new(),
             name: props.name,
             link: link,
             console: ConsoleService::new(),
@@ -34,7 +34,7 @@ impl Component for PlayerView {
     fn update(&mut self, msg: Self::Message) -> ShouldRender {
         match msg {
             Msg::NewDeck => {
-                self.player.hand = Vec::new();
+                self.hand = Vec::new();
                 self.console.log("New Hand");
             }
         }
@@ -42,7 +42,7 @@ impl Component for PlayerView {
     }
 
     fn view(&self) -> Html {
-        let hand = serde_json::to_string(&self.player).unwrap();
+        let hand = serde_json::to_string(&self.hand).unwrap();
         html! {
             <div>
                 <h2> { &self.name } </h2>
