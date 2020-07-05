@@ -1,3 +1,5 @@
+.PHONY: run backend frontend frontend_build rollup_js
+
 frontend: frontend_build rollup_js
 
 frontend_build:
