@@ -1,7 +1,7 @@
 #![recursion_limit = "256"]
 
 mod app;
-mod player_view;
+mod game_player_view;
 
 use wasm_bindgen::prelude::*;
 
