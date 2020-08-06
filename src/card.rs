@@ -20,7 +20,7 @@ pub enum Rank {
     Jack,
 }
 
-#[derive(Serialize, Deserialize, Clone, PartialEq, Debug)]
+#[derive(Serialize, Deserialize, Copy, Clone, PartialEq, Debug)]
 pub struct Card {
     pub suit: Suit,
     pub rank: Rank,

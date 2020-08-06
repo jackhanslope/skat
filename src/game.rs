@@ -5,16 +5,16 @@ use rand::thread_rng;
 #[derive(Debug)]
 pub struct Round {
     state: State,
-    forehand: Vec<Card>,
-    middlehand: Vec<Card>,
-    rearhand: Vec<Card>,
-    skat: Vec<Card>,
-    trick: Vec<Card>,
+    forehand: [Option<Card>; 10],
+    middlehand: [Option<Card>; 10],
+    rearhand: [Option<Card>; 10],
+    skat: [Option<Card>; 2],
+    trick: [Option<Card>; 3],
 }
 
 #[derive(PartialEq, Debug)]
 struct State {
-    bid: u8,
+    bid: [u8; 3],
     modifier: u8,
     turn: u8,
     game_type: Mode,
@@ -56,30 +56,43 @@ pub fn new_round() -> Round {
 
     for s in suits.iter() {
         for r in ranks.iter() {
-            deck.push(Card { suit: *s, rank: *r })
+            deck.push(Some(Card { suit: *s, rank: *r }))
         }
     }
 
     deck.shuffle(&mut thread_rng());
 
     let state = State {
-        bid: 0,
+        bid: [0; 3],
         modifier: 1,
         turn: 0,
         game_type: Mode::Bidding,
     };
 
-    return Round {
+    let mut round = Round {
         state: state,
-        forehand: deck[0..10].to_vec(),
-        middlehand: deck[10..20].to_vec(),
-        rearhand: deck[20..30].to_vec(),
-        skat: deck[30..].to_vec(),
-        trick: Vec::new(),
+        forehand: [None; 10],
+        middlehand: [None; 10],
+        rearhand: [None; 10],
+        skat: [None; 2],
+        trick: [None; 3],
     };
+
+    let mut iter = deck.chunks_exact(10);
+
+    round.forehand.copy_from_slice(iter.next().unwrap());
+    round.middlehand.copy_from_slice(iter.next().unwrap());
+    round.rearhand.copy_from_slice(iter.next().unwrap());
+    round.skat.copy_from_slice(iter.remainder());
+
+    return round;
 }
 
-pub fn available_actions(round: &Round) -> Vec<Actions> {
+pub fn available_actions(round: &Round, player: u8) -> Option<Vec<Actions>> {
+    if player != round.state.turn {
+        return None
+    }
+
     let mut actions = Vec::new();
     match round.state.game_type {
         Mode::Bidding => {
@@ -88,11 +101,11 @@ pub fn available_actions(round: &Round) -> Vec<Actions> {
         }
         _ => (),
     }
-    return actions;
+    return Some(actions);
 }
 
 fn get_next_bid(round: &Round) -> u8 {
-    match round.state.bid {
+    match round.state.bid[round.state.turn as usize] {
         0 => 18,
         18 => 20,
         20 => 22,
@@ -118,7 +131,7 @@ mod tests {
         assert_eq!(
             round.state,
             State {
-                bid: 0,
+                bid: [0; 3],
                 modifier: 1,
                 turn: 0,
                 game_type: Mode::Bidding
@@ -128,34 +141,34 @@ mod tests {
         assert_eq!(round.middlehand.len(), 10);
         assert_eq!(round.rearhand.len(), 10);
         assert_eq!(round.skat.len(), 2);
-        assert_eq!(round.trick.len(), 0);
+        assert_eq!(round.trick, [None; 3]);
     }
 
     #[test]
     fn test_get_avialable_actions() {
         let mut round = Round {
             state: State {
-                bid: 0,
+                bid: [0; 3],
                 modifier: 1,
                 turn: 0,
                 game_type: Mode::Bidding,
             },
-            forehand: Vec::new(),
-            middlehand: Vec::new(),
-            rearhand: Vec::new(),
-            skat: Vec::new(),
-            trick: Vec::new(),
+            forehand: [None; 10],
+            middlehand: [None; 10],
+            rearhand: [None; 10],
+            skat: [None, None],
+            trick: [None; 3],
         };
 
         assert_eq!(
-            available_actions(&round),
-            vec![Actions::Bid(18), Actions::Pass]
+            available_actions(&round, 0),
+            Some(vec![Actions::Bid(18), Actions::Pass])
         );
 
-        round.state.bid = 33;
+        round.state.bid = [33, 18, 18];
         assert_eq!(
-            available_actions(&round),
-            vec![Actions::Bid(35), Actions::Pass]
+            available_actions(&round, 0),
+            Some(vec![Actions::Bid(35), Actions::Pass])
         );
     }
 }
