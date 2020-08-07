@@ -1,8 +1,10 @@
-use crate::card::{Card, Rank, Suit};
+use serde::{Deserialize, Serialize};
 use rand::seq::SliceRandom;
 use rand::thread_rng;
 
-#[derive(Debug)]
+use crate::card::{Card, Rank, Suit};
+
+#[derive(Serialize, Deserialize, Debug)]
 pub struct Round {
     state: State,
     forehand: [Option<Card>; 10],
@@ -12,7 +14,7 @@ pub struct Round {
     trick: [Option<Card>; 3],
 }
 
-#[derive(PartialEq, Debug)]
+#[derive(Serialize, Deserialize, PartialEq, Debug)]
 struct State {
     bids: [u8; 3],
     modifier: u8,
@@ -20,7 +22,7 @@ struct State {
     mode: Mode,
 }
 
-#[derive(PartialEq, Debug)]
+#[derive(Serialize, Deserialize, PartialEq, Debug)]
 pub enum Mode {
     SuitGame(Suit),
     Null,
@@ -30,7 +32,7 @@ pub enum Mode {
     Finished,
 }
 
-#[derive(PartialEq, Debug)]
+#[derive(Serialize, Deserialize, PartialEq, Debug)]
 pub enum Action {
     Bid(u8),
     Pass,

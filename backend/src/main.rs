@@ -4,16 +4,15 @@ use rocket::response::NamedFile;
 use rocket::{get, routes};
 use rocket_contrib::json::Json;
 use rocket_contrib::serve::StaticFiles;
-use skat::card::Card;
-use skat::deck::Deck;
+use skat::game::Round;
 use std::path::Path;
 
-#[get("/new_deck")]
-fn new_deck() -> Json<Vec<Card>> {
-    println!("Hello, world!");
-    let mut deck = Deck::new();
-    deck.shuffle();
-    Json(deck.cards)
+#[get("/new_round")]
+fn new_round() -> Json<Round> {
+    let round = skat::game::new_round();
+    // TODO can't actually return the round here. create a unique identifier for the round then use
+    // that to store it server side. Then return identifier
+    return Json(round);
 }
 
 #[get("/")]
@@ -29,7 +28,7 @@ fn favicon() -> Option<NamedFile> {
 fn main() {
     rocket::ignite()
         .mount("/static", StaticFiles::from("./static"))
-        .mount("/api", routes![new_deck])
+        .mount("/api", routes![new_round])
         .mount("/", routes![index, favicon])
         .launch();
 }
