@@ -104,9 +104,10 @@ pub fn available_actions(round: &Round, player: u8) -> Option<Vec<Action>> {
             let next_bid = get_next_bid(max_bid);
             let player_bid = round.state.bids[round.state.turn as usize];
             let bid: u8;
-            if player_bid == *max_bid || (player_bid == 0 && round.state.turn == 2)
-            // Special case for rear's 1st bid
-            {
+            if player_bid == 0 && round.state.turn == 2 {
+                // Special case for rear's 1st bid
+                bid = next_bid;
+            } else if player_bid == *max_bid {
                 // player must raise
                 bid = next_bid;
             } else {
