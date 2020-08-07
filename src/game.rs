@@ -1,6 +1,6 @@
-use serde::{Deserialize, Serialize};
 use rand::seq::SliceRandom;
 use rand::thread_rng;
+use serde::{Deserialize, Serialize};
 
 use crate::card::{Card, Rank, Suit};
 
@@ -94,7 +94,7 @@ pub fn new_round() -> Round {
 
 pub fn available_actions(round: &Round, player: u8) -> Option<Vec<Action>> {
     if player != round.state.turn {
-        return None
+        return None;
     }
 
     let mut actions = Vec::new();
@@ -103,10 +103,10 @@ pub fn available_actions(round: &Round, player: u8) -> Option<Vec<Action>> {
             let max_bid = round.state.bids.iter().max().unwrap();
             let next_bid = get_next_bid(max_bid);
             let player_bid = round.state.bids[round.state.turn as usize];
-            let bid:u8;
-            if player_bid == *max_bid 
-                || (player_bid == 0 && round.state.turn == 2) // Special case for rear's 1st bid
-            { 
+            let bid: u8;
+            if player_bid == *max_bid || (player_bid == 0 && round.state.turn == 2)
+            // Special case for rear's 1st bid
+            {
                 // player must raise
                 bid = next_bid;
             } else {
@@ -117,15 +117,23 @@ pub fn available_actions(round: &Round, player: u8) -> Option<Vec<Action>> {
             actions.push(Action::Bid(bid));
             actions.push(Action::Pass);
         }
-        _ => { return None; },
+        _ => {
+            return None;
+        }
     }
     return Some(actions);
 }
 
 pub fn apply_action(round: &mut Round, action: Action, player: u8) -> bool {
     match available_actions(round, player) {
-        None => { return false; }
-        Some(aa) => { if !(aa.contains(&action)) { return false } }
+        None => {
+            return false;
+        }
+        Some(aa) => {
+            if !(aa.contains(&action)) {
+                return false;
+            }
+        }
     }
 
     let turn = round.state.turn;
@@ -134,14 +142,12 @@ pub fn apply_action(round: &mut Round, action: Action, player: u8) -> bool {
             let bids = &round.state.bids;
             if bids == &[0, 0, 0] {
                 match turn {
-                    1 => { round.state.turn = 2 }
-                    2 => { round.state.turn = 0 }
-                    0 => { round.state.mode = Mode::Finished } // everyone passed
-                    _ => { panic!() }
+                    1 => round.state.turn = 2,
+                    2 => round.state.turn = 0,
+                    0 => round.state.mode = Mode::Finished, // everyone passed
+                    _ => panic!(),
                 }
-            } 
-            else if turn == 0 || turn == 1
-            {
+            } else if turn == 0 || turn == 1 {
                 // when fore/middle passes rear either won or hasn't bid yet
                 round.state.turn = 2;
                 if round.state.bids[2] != 0 {
@@ -158,12 +164,12 @@ pub fn apply_action(round: &mut Round, action: Action, player: u8) -> bool {
                 }
             }
         }
-        Action::Bid(n) => { 
+        Action::Bid(n) => {
             round.state.bids[turn as usize] = n;
             round.state.turn = get_next_bidder(&round.state.bids);
             return true;
         }
-        _ => ()
+        _ => (),
     }
 
     return true;
@@ -172,16 +178,16 @@ pub fn apply_action(round: &mut Round, action: Action, player: u8) -> bool {
 fn get_next_bidder(bids: &[u8; 3]) -> u8 {
     match bids {
         // f vs m
-        [f, m, 0] if f == m => { return 1 } // f just matched m so m turn
-        [f, m, 0] if m > f => { return 0 } // m just raised
+        [f, m, 0] if f == m => return 1, // f just matched m so m turn
+        [f, m, 0] if m > f => return 0,  // m just raised
         // f vs r
-        [f, m, r] if f == r && m <= f => { return 2 }
-        [f, m, r] if r > f && m <= f => { return 0 }
+        [f, m, r] if f == r && m <= f => return 2,
+        [f, m, r] if r > f && m <= f => return 0,
         // m vs r
-        [f, m, r] if m == r && m > f => { return 2 }
-        [f, m, r] if r > m && m > f => { return 1 }
+        [f, m, r] if m == r && m > f => return 2,
+        [f, m, r] if r > m && m > f => return 1,
 
-        _ => { panic!() }
+        _ => panic!(),
     }
 }
 
@@ -245,27 +251,45 @@ mod tests {
         assert_eq!(available_actions(&round, 2), None);
         assert_eq!(available_actions(&round, 0), None);
 
-        assert_eq!(available_actions(&round, 1), Some(vec![Action::Bid(18), Action::Pass]));
+        assert_eq!(
+            available_actions(&round, 1),
+            Some(vec![Action::Bid(18), Action::Pass])
+        );
         assert_eq!(apply_action(&mut round, Action::Bid(18), 1), true);
         assert_eq!((round.state.bids, round.state.turn), ([0, 18, 0], 0));
 
-        assert_eq!(available_actions(&round, 0), Some(vec![Action::Bid(18), Action::Pass]));
+        assert_eq!(
+            available_actions(&round, 0),
+            Some(vec![Action::Bid(18), Action::Pass])
+        );
         assert_eq!(apply_action(&mut round, Action::Bid(18), 0), true);
         assert_eq!((round.state.bids, round.state.turn), ([18, 18, 0], 1));
 
-        assert_eq!(available_actions(&round, 1), Some(vec![Action::Bid(20), Action::Pass]));
+        assert_eq!(
+            available_actions(&round, 1),
+            Some(vec![Action::Bid(20), Action::Pass])
+        );
         assert_eq!(apply_action(&mut round, Action::Bid(20), 1), true);
         assert_eq!((round.state.bids, round.state.turn), ([18, 20, 0], 0));
 
-        assert_eq!(available_actions(&round, 0), Some(vec![Action::Bid(20), Action::Pass]));
+        assert_eq!(
+            available_actions(&round, 0),
+            Some(vec![Action::Bid(20), Action::Pass])
+        );
         assert_eq!(apply_action(&mut round, Action::Pass, 0), true);
         assert_eq!((round.state.bids, round.state.turn), ([18, 20, 0], 2));
 
-        assert_eq!(available_actions(&round, 2), Some(vec![Action::Bid(22), Action::Pass]));
+        assert_eq!(
+            available_actions(&round, 2),
+            Some(vec![Action::Bid(22), Action::Pass])
+        );
         assert_eq!(apply_action(&mut round, Action::Bid(22), 2), true);
         assert_eq!((round.state.bids, round.state.turn), ([18, 20, 22], 1));
 
-        assert_eq!(available_actions(&round, 1), Some(vec![Action::Bid(22), Action::Pass]));
+        assert_eq!(
+            available_actions(&round, 1),
+            Some(vec![Action::Bid(22), Action::Pass])
+        );
         assert_eq!(apply_action(&mut round, Action::Bid(22), 1), true);
         assert_eq!((round.state.bids, round.state.turn), ([18, 22, 22], 2));
 
@@ -299,7 +323,10 @@ mod tests {
         assert_eq!(apply_action(&mut round, Action::Pass, 1), true);
         assert_eq!((round.state.bids, round.state.turn), ([18, 18, 0], 2));
 
-        assert_eq!(available_actions(&round, 2), Some(vec![Action::Bid(20), Action::Pass]));
+        assert_eq!(
+            available_actions(&round, 2),
+            Some(vec![Action::Bid(20), Action::Pass])
+        );
         assert_eq!(apply_action(&mut round, Action::Pass, 2), true);
         assert_eq!((round.state.bids, round.state.turn), ([18, 18, 0], 0));
         assert_eq!(round.state.mode, Mode::Announcing);
@@ -336,7 +363,7 @@ mod tests {
     }
 
     #[test]
-    fn test_all_pass() {
+    fn test_all_pass_in_bidding() {
         let mut round = Round {
             state: State {
                 bids: [0; 3],
@@ -357,7 +384,10 @@ mod tests {
         assert_eq!(apply_action(&mut round, Action::Pass, 2), true);
         assert_eq!((round.state.bids, round.state.turn), ([0, 0, 0], 0));
 
-        assert_eq!(available_actions(&round, 0), Some(vec![Action::Bid(18), Action::Pass]));
+        assert_eq!(
+            available_actions(&round, 0),
+            Some(vec![Action::Bid(18), Action::Pass])
+        );
         assert_eq!(apply_action(&mut round, Action::Pass, 0), true);
         assert_eq!((round.state.bids, round.state.turn), ([0, 0, 0], 0));
         assert_eq!(round.state.mode, Mode::Finished);
