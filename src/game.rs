@@ -4,12 +4,12 @@ use serde::{Deserialize, Serialize};
 
 use crate::card::{Card, Rank, Suit};
 
-#[derive(Serialize, Deserialize, Debug)]
+#[derive(Serialize, Deserialize, PartialEq, Debug)]
 pub struct Round {
     state: State,
-    forehand: [Option<Card>; 10],
-    middlehand: [Option<Card>; 10],
-    rearhand: [Option<Card>; 10],
+    pub forehand: [Option<Card>; 10],
+    pub middlehand: [Option<Card>; 10],
+    pub rearhand: [Option<Card>; 10],
     skat: [Option<Card>; 2],
     trick: [Option<Card>; 3],
 }
