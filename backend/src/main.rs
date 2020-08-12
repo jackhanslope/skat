@@ -1,6 +1,7 @@
 #![feature(proc_macro_hygiene, decl_macro)]
 
-use rocket::response::{status, NamedFile};
+use rand::Rng;
+use rocket::response::NamedFile;
 use rocket::{get, post, routes, State};
 use rocket_contrib::json::Json;
 use rocket_contrib::serve::StaticFiles;
@@ -25,7 +26,14 @@ fn create_game(games_map: State<Mutex<HashMap<u32, Game>>>) -> Json<u32> {
         rounds: std::vec::Vec::new(),
         player_ids: (0, 0, 0),
     };
-    let game_id = 1; //TODO
+    let mut rng = rand::thread_rng();
+    let mut game_id;
+    loop {
+        game_id = rng.gen::<u32>();
+        if game_id != 0 && !games_map.lock().unwrap().contains_key(&game_id) {
+            break;
+        }
+    }
     games_map.lock().unwrap().insert(game_id, game);
     return Json(game_id);
 }
