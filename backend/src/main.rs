@@ -69,16 +69,16 @@ fn get_limited_round(
         None => panic!(), // TODO
         Some(game) => {
             let (f, m, r) = game.player_ids;
-            let round = &game.rounds[game.rounds.len() -1];
+            let round = &game.rounds[game.rounds.len() - 1];
             if player_id == f {
                 return Json(round.forehand);
             } else if player_id == m {
                 return Json(round.middlehand);
             } else if player_id == r {
                 return Json(round.rearhand);
-            } else { 
+            } else {
                 panic!() // TODO
-            } 
+            }
         }
     }
 }
@@ -98,7 +98,10 @@ fn main() {
     rocket::ignite()
         .manage(games_map)
         .mount("/static", StaticFiles::from("./static"))
-        .mount("/api", routes![create_game, join_game, get_limited_round, new_round])
+        .mount(
+            "/api",
+            routes![create_game, join_game, get_limited_round, new_round],
+        )
         .mount("/", routes![index, favicon])
         .launch();
 }
