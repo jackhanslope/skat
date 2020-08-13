@@ -39,20 +39,28 @@ fn create_game(games_map: State<Mutex<HashMap<u32, Game>>>) -> Json<u32> {
 }
 
 #[post("/game/<game_id>/join")]
-fn join_game(games_map: State<Mutex<HashMap<u32, Game>>>, game_id: u32) -> Json<u32> {
-    let rdm_id = 1; // TODO gen random id not 0 and not already in ids
+fn join_game(games_map: State<Mutex<HashMap<u32, Game>>>, game_id: u32) -> Option<Json<u32>> {
     match games_map.lock().unwrap().get_mut(&game_id) {
-        None => panic!(), // TODO
+        None => None,
         Some(game) => {
+            let mut rng = rand::thread_rng();
+            let mut player_id;
+            loop {
+                player_id = rng.gen::<u32>();
+                if player_id != 0 {
+                    break;
+                }
+            }
+
             match game.player_ids {
-                (0, 0, 0) => game.player_ids.0 = rdm_id,
-                (_, 0, 0) => game.player_ids.1 = rdm_id,
-                (_, _, 0) => game.player_ids.2 = rdm_id,
+                (0, 0, 0) => game.player_ids.0 = player_id,
+                (_, 0, 0) => game.player_ids.1 = player_id,
+                (_, _, 0) => game.player_ids.2 = player_id,
                 (_, _, _) => panic!(), // TODO game full, dealer/spectators?
             }
+            Some(Json(player_id))
         }
     }
-    Json(rdm_id)
 }
 
 #[post("/game/<game_id>/round")]
@@ -72,20 +80,20 @@ fn get_limited_round(
     games_map: State<Mutex<HashMap<u32, Game>>>,
     game_id: u32,
     player_id: u32,
-) -> Json<[Option<Card>; 10]> {
+) -> Option<Json<[Option<Card>; 10]>> {
     match games_map.lock().unwrap().get(&game_id) {
-        None => panic!(), // TODO
+        None => None,
         Some(game) => {
             let (f, m, r) = game.player_ids;
             let round = &game.rounds[game.rounds.len() - 1];
             if player_id == f {
-                return Json(round.forehand);
+                return Some(Json(round.forehand));
             } else if player_id == m {
-                return Json(round.middlehand);
+                return Some(Json(round.middlehand));
             } else if player_id == r {
-                return Json(round.rearhand);
+                return Some(Json(round.rearhand));
             } else {
-                panic!() // TODO
+                None
             }
         }
     }
