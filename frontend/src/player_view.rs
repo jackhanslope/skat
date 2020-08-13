@@ -6,11 +6,12 @@ pub struct PlayerView {
     hand: Vec<Card>,
     name: String,
     link: ComponentLink<Self>,
-    console: ConsoleService,
 }
 
 pub enum Msg {
-    NewDeck,
+    NewGame,
+    JoinGame,
+    NewRound,
 }
 
 #[derive(Clone, PartialEq, Properties)]
@@ -27,18 +28,21 @@ impl Component for PlayerView {
             hand: Vec::new(),
             name: props.name,
             link: link,
-            console: ConsoleService::new(),
         }
     }
 
     fn update(&mut self, msg: Self::Message) -> ShouldRender {
         match msg {
-            Msg::NewDeck => {
-                self.hand = Vec::new();
-                self.console.log("New Hand");
+            Msg::NewGame => {
             }
+            Msg::JoinGame => (),
+            Msg::NewRound => (),
         }
         true
+    }
+
+    fn change(&mut self, _: Self::Properties) -> ShouldRender {
+        false
     }
 
     fn view(&self) -> Html {
@@ -47,8 +51,8 @@ impl Component for PlayerView {
             <div>
                 <h2> { &self.name } </h2>
                 <nav class="menu">
-                    <button onclick=self.link.callback(|_| Msg::NewDeck)>
-                        { "New Hand" }
+                    <button onclick=self.link.callback(|_| Msg::NewGame)>
+                        { "New Game" }
                     </button>
                 </nav>
                 <p>{ hand }</p>
