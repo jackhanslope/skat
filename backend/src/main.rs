@@ -56,7 +56,7 @@ fn join_game(games_map: State<Mutex<HashMap<u32, Game>>>, game_id: u32) -> Optio
                 (0, 0, 0) => game.player_ids.0 = player_id,
                 (_, 0, 0) => game.player_ids.1 = player_id,
                 (_, _, 0) => game.player_ids.2 = player_id,
-                (_, _, _) => panic!(), // TODO game full, dealer/spectators?
+                (_, _, _) => return None, // TODO game full, dealer/spectators?
             }
             Some(Json(player_id))
         }
@@ -76,7 +76,7 @@ fn new_round(games_map: State<Mutex<HashMap<u32, Game>>>, game_id: u32) {
 }
 
 #[get("/game/<game_id>/round?<player_id>")]
-fn get_limited_round(
+fn get_player_hand(
     games_map: State<Mutex<HashMap<u32, Game>>>,
     game_id: u32,
     player_id: u32,
@@ -116,7 +116,7 @@ fn main() {
         .mount("/static", StaticFiles::from("./static"))
         .mount(
             "/api",
-            routes![create_game, join_game, get_limited_round, new_round],
+            routes![create_game, join_game, get_player_hand, new_round],
         )
         .mount("/", routes![index, favicon])
         .launch();

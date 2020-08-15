@@ -26,9 +26,7 @@ impl Component for App {
         html! {
             <div class="main">
                 <h1>{ "Skat" }</h1>
-                <PlayerView name="Alice"/>
-                <PlayerView name="Bob"/>
-                <PlayerView name="Eve"/>
+                <PlayerView name="You"/>
             </div>
         }
     }
