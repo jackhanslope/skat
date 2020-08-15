@@ -1,4 +1,6 @@
-.PHONY: run backend frontend frontend_build rollup_js
+.PHONY: run backend frontend frontend_build rollup_js all
+
+all: backend frontend
 
 frontend: frontend_build rollup_js
 
@@ -14,6 +16,6 @@ backend:
 	cd backend \
 	&& cargo build
 
-run: backend frontend
+run: all
 	cd backend \
 	&& cargo run
