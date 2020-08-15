@@ -1,7 +1,7 @@
-use skat::card::Card;
-use yew::prelude::*;
 use crate::config::HOST;
 use reqwest;
+use skat::card::Card;
+use yew::prelude::*;
 
 pub struct PlayerView {
     hand: [Option<Card>; 10],
@@ -45,22 +45,24 @@ impl Component for PlayerView {
         match msg {
             Msg::NewGameRequest => {
                 let callback = self.link.callback(Msg::NewGame);
-                wasm_bindgen_futures::spawn_local( async move {
+                wasm_bindgen_futures::spawn_local(async move {
                     PlayerView::new_game_request(callback).await;
                 });
             }
-            Msg::NewGame(Ok(game_id)) => { 
+            Msg::NewGame(Ok(game_id)) => {
                 self.game_id = game_id;
                 self.link.callback(Msg::JoinGameRequest).emit(None);
             }
             Msg::NewGame(Err(_)) => (), // TODO
 
-            Msg::JoinGameRequest(None) => 
-                self.link.callback(Msg::JoinGameRequest).emit(Some(self.game_id)),
+            Msg::JoinGameRequest(None) => self
+                .link
+                .callback(Msg::JoinGameRequest)
+                .emit(Some(self.game_id)),
             Msg::JoinGameRequest(Some(game_id)) => {
                 let callback = self.link.callback(Msg::JoinGame);
                 self.game_id = game_id;
-                wasm_bindgen_futures::spawn_local( async move {
+                wasm_bindgen_futures::spawn_local(async move {
                     PlayerView::join_game_request(game_id, callback).await;
                 });
             }
@@ -73,19 +75,19 @@ impl Component for PlayerView {
             Msg::NewRoundRequest => {
                 let callback = self.link.callback(Msg::NewRound);
                 let game_id = self.game_id;
-                wasm_bindgen_futures::spawn_local( async move {
+                wasm_bindgen_futures::spawn_local(async move {
                     PlayerView::new_round_request(game_id, callback).await;
                 });
             }
             Msg::NewRound(Ok(true)) => (),
             Msg::NewRound(Ok(false)) => (), //TODO
-            Msg::NewRound(Err(_)) => (), // TODO
+            Msg::NewRound(Err(_)) => (),    // TODO
 
             Msg::GetHandRequest => {
                 let callback = self.link.callback(Msg::GetHand);
                 let game_id = self.game_id;
                 let player_id = self.player_id;
-                wasm_bindgen_futures::spawn_local( async move {
+                wasm_bindgen_futures::spawn_local(async move {
                     PlayerView::get_player_hand_request(game_id, player_id, callback).await;
                 });
             }
@@ -95,7 +97,7 @@ impl Component for PlayerView {
             }
             Msg::GetHand(Err(_)) => (), // TODO
         }
-        return false
+        return false;
     }
 
     fn change(&mut self, _: Self::Properties) -> ShouldRender {
@@ -129,7 +131,11 @@ impl Component for PlayerView {
 
 impl PlayerView {
     async fn new_game_request(then: Callback<Result<u32, reqwest::Error>>) {
-        match reqwest::Client::new().post(&format!("{}/api/game", HOST)).send().await {
+        match reqwest::Client::new()
+            .post(&format!("{}/api/game", HOST))
+            .send()
+            .await
+        {
             Err(err) => then.emit(Err(err)),
             Ok(res) => {
                 match res.text().await.unwrap().parse::<u32>() {
@@ -139,7 +145,7 @@ impl PlayerView {
             }
         }
     }
-    
+
     async fn join_game_request(game_id: u32, then: Callback<Result<u32, reqwest::Error>>) {
         let url = format!("{}/api/game/{}/join", HOST, game_id);
         match reqwest::Client::new().post(&url).send().await {
@@ -161,8 +167,15 @@ impl PlayerView {
         }
     }
 
-    async fn get_player_hand_request(game_id: u32, player_id: u32, then: Callback<Result<[Option<Card>; 10], reqwest::Error>>) {
-        let url = format!("{}/api/game/{}/round?player_id={}", HOST, game_id, player_id);
+    async fn get_player_hand_request(
+        game_id: u32,
+        player_id: u32,
+        then: Callback<Result<[Option<Card>; 10], reqwest::Error>>,
+    ) {
+        let url = format!(
+            "{}/api/game/{}/round?player_id={}",
+            HOST, game_id, player_id
+        );
         match reqwest::Client::new().get(&url).send().await {
             Err(err) => then.emit(Err(err)),
             Ok(res) => {
